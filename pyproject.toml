@@ -1,0 +1,14 @@
+[project]
+name = "ti-cli"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyodbc>=5.3.0",
+    "ta-lib",
+    "yfinance>=0.2.66",
+]
+
+# [tool.uv.sources]
+# ta-lib = { path = "ta_lib-0.6.8-cp312-cp312-win_amd64.whl" }
