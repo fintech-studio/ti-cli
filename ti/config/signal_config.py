@@ -1,4 +1,4 @@
-"""配置檔：放置訊號權重等常數"""
+# 訊號權重常數
 SIGNAL_WEIGHTS = {
     'MACD_Div': 2.0,
     'MA_Cross': 1.5,

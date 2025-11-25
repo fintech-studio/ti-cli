@@ -1,4 +1,4 @@
-from ti.config.config_manager import ConfigManager
+from ti.config.config_manage import ConfigManager
 
 class DatabaseConfig:
     """資料庫配置類 - 提供資料庫配置介面"""
