@@ -1,6 +1,5 @@
 import talib
 import pandas as pd
-import numpy as np
 
 class TechnicalIndicatorCalculator:
     """技術指標計算器 - 負責計算各種技術指標"""
@@ -8,7 +7,7 @@ class TechnicalIndicatorCalculator:
     def __init__(self):
         pass
     
-    def calculate_all_indicators(self, data):
+    def calculate_all_indicators(self, data:pd.DataFrame) -> pd.DataFrame:
         """計算所有技術指標"""
         
         high = data['High'].values
