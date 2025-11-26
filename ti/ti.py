@@ -71,6 +71,13 @@ def main():
     
     # 處理 add 子命令 - 計算技術指標並分析交易訊號
     if args.command == 'add':
+        service = StockDataService()
+        
+        if not args.symbols:
+            print("請提供至少一個股票代號")
+            print("範例: ti add 2330 --tw --1d")
+            print("      ti add AAPL --us --1h")
+            return
 
         # 確定市場類型
         market = None
@@ -115,8 +122,16 @@ def main():
             return
         
         for symbol in args.symbols:
-            print(f"處理股票代碼: {symbol} 市場: {market} 時間: {time}")
-            # 在此處調用技術指標計算和交易訊號分析的相關函數
+            try:
+                print(f"正在處理 {symbol} ({market}, {time})...")
+                result = service.fetch_and_store(symbol, market, time)
+                print(f"✓ {symbol} 技術指標資料已成功儲存")
+                print(f"  - 獲取了 {result['data_count']} 筆股票數據")
+                print(f"  - 計算了 {result['indicator_count']} 個技術指標")
+                print(f"  - 數據已保存至資料表 stock_data_{time}")
+                
+            except Exception as e:
+                print(f"✗ {symbol} 處理失敗: {str(e)}")
     
     # 處理 db 子命令 - 資料庫管理配置與管理
     if args.command == 'db':
@@ -197,4 +212,63 @@ def main():
                 print("not available tables.")
         
 def show_help():
-    help_text = f""""""
+    help_text = f"""
+{color_text('Technical Indicators Analysis System', Colors.BOLD + Colors.CYAN)}
+
+{color_text('Basic Usage:', Colors.BOLD + Colors.YELLOW)}
+  {color_text('ti', Colors.GREEN)} {color_text('[command]', Colors.BLUE)} {color_text('[options]', Colors.MAGENTA)}
+
+{color_text('Subcommands:', Colors.BOLD + Colors.YELLOW)}
+  {color_text('ti add', Colors.GREEN)}                               Calculate technical indicators and analyze trading signals
+  {color_text('ti db', Colors.GREEN)}                                Database configuration and management
+
+{color_text('Technical Analysis:', Colors.BOLD + Colors.YELLOW)}
+  {color_text('ti add', Colors.GREEN)} {color_text('<stock_symbol>', Colors.BLUE)} {color_text('--<market>', Colors.MAGENTA)} {color_text('--<interval>', Colors.MAGENTA)}   Analyze stock with technical indicators
+
+{color_text('Market Options:', Colors.BOLD + Colors.YELLOW)}
+  {color_text('--tw', Colors.MAGENTA)}          Taiwan Stock Exchange
+  {color_text('--us', Colors.MAGENTA)}          US Stock Market
+  {color_text('--etf', Colors.MAGENTA)}         ETF
+  {color_text('--index', Colors.MAGENTA)}       Index
+  {color_text('--crypto', Colors.MAGENTA)}      Cryptocurrency
+  {color_text('--forex', Colors.MAGENTA)}       Foreign Exchange
+  {color_text('--futures', Colors.MAGENTA)}     Futures
+
+{color_text('Time Intervals:', Colors.BOLD + Colors.YELLOW)}
+  {color_text('--1m', Colors.MAGENTA)}          1 minute data
+  {color_text('--5m', Colors.MAGENTA)}          5 minutes data
+  {color_text('--15m', Colors.MAGENTA)}         15 minutes data
+  {color_text('--30m', Colors.MAGENTA)}         30 minutes data
+  {color_text('--1h', Colors.MAGENTA)}          1 hour data
+  {color_text('--1d', Colors.MAGENTA)}          1 day data
+  {color_text('--1w', Colors.MAGENTA)}          1 week data
+  {color_text('--1mo', Colors.MAGENTA)}         1 month data
+
+{color_text('Database Configuration:', Colors.BOLD + Colors.YELLOW)}
+  {color_text('ti db --host', Colors.GREEN)} {color_text('<address>', Colors.BLUE)}               Set database host
+  {color_text('ti db --database', Colors.GREEN)} {color_text('<name>', Colors.BLUE)}              Set database name
+  {color_text('ti db --user', Colors.GREEN)} {color_text('<username>', Colors.BLUE)}              Set database username
+  {color_text('ti db --password', Colors.GREEN)} {color_text('<password>', Colors.BLUE)}          Set database password
+  {color_text('ti db --driver', Colors.GREEN)} {color_text('<driver>', Colors.BLUE)}              Set database driver
+  {color_text('ti db --clear', Colors.GREEN)}                        Clear all database settings
+  {color_text('ti db --config', Colors.GREEN)}                       Show database configuration
+  {color_text('ti db --check', Colors.GREEN)}                        Check database connection
+  {color_text('ti db --tables', Colors.GREEN)}                       Show database tables
+
+{color_text('Usage Examples:', Colors.BOLD + Colors.YELLOW)}
+  {color_text('# Configure database', Colors.GRAY)}
+  {color_text('ti db --host localhost --database TiDB --user sa --password YourPassword', Colors.GREEN)}
+  
+  {color_text('# Analyze Taiwan stocks', Colors.GRAY)}
+  {color_text('ti add 2330 --tw --1d', Colors.GREEN)}
+  {color_text('ti add 0050 --tw --1h', Colors.GREEN)}
+  
+  {color_text('# Analyze US stocks', Colors.GRAY)}
+  {color_text('ti add AAPL --us --1d', Colors.GREEN)}
+  {color_text('ti add TSLA --us --1h', Colors.GREEN)}
+  
+  {color_text('# Analyze multiple stocks', Colors.GRAY)}
+  {color_text('ti add 2330 0050 2454 --tw --1d', Colors.GREEN)}
+  {color_text('ti add AAPL MSFT GOOGL --us --1d', Colors.GREEN)}
+"""
+    print(help_text)

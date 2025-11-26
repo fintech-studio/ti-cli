@@ -10,5 +10,12 @@ dependencies = [
     "yfinance>=0.2.66",
 ]
 
+[project.scripts]
+ti = "ti.ti:main"
+
+[tool.setuptools]
+packages = ["ti", "ti.services", "ti.providers", "ti.repositories", 
+            "ti.calculators", "ti.config","ti.pattern",
+            "ti.signals"]
 # [tool.uv.sources]
 # ta-lib = { path = "ta_lib-0.6.8-cp312-cp312-win_amd64.whl" }
