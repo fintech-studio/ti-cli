@@ -1,6 +1,7 @@
 from ti.providers.stock_data_provider import StockDataProvider
 from ti.repositories.stock_data_repository import StockDataRepository
 from ti.calculators.tech_indicator import TechnicalIndicatorCalculator
+
 class StockDataService:
     """股票數據服務類"""
 
