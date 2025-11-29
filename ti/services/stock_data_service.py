@@ -1,6 +1,7 @@
 from ti.providers.stock_data_provider import StockDataProvider
 from ti.repositories.stock_data_repository import StockDataRepository
 from ti.calculators.tech_indicator import TechnicalIndicatorCalculator
+from ti.pattern.kline_pattern import KLinePatternDetector
 
 class StockDataService:
     """股票數據服務類"""
@@ -9,6 +10,7 @@ class StockDataService:
         self.provider = StockDataProvider()
         self.repository = StockDataRepository()
         self.indicator_calculator = TechnicalIndicatorCalculator()
+        self.pattern_detector = KLinePatternDetector()
     
     def _get_ticker_with_suffix(self, ticker: str, market: str):
         """根據市場格式化股票代號"""
@@ -30,7 +32,7 @@ class StockDataService:
         """根據時間間隔設定獲取期間"""
         period_map = {
             '1m': '7d', '5m': '7d', '15m': '7d', '30m': '7d',
-            '1h': '1mo', '1d': '1y', '1w': '2y', '1mo': '5y'
+            '1h': '1mo', '1d': '1y', '1wk': '2y', '1mo': '5y'
         }
         return period_map.get(interval, '1y')
     
@@ -45,19 +47,23 @@ class StockDataService:
         period = self._get_period_by_interval(interval)
         table = self._get_table_name(interval)
 
-        # 1. 獲取股票數據
+        # 獲取股票數據
         stock_data = self.provider.get_stock_data(formatted_symbol, period, interval)
         
-        # 2. 計算技術指標
+        # 計算技術指標
         indicators = self.indicator_calculator.calculate_all_indicators(stock_data)
         
-        # 3. 保存數據到資料庫
-        self.repository.save_stock_data(symbol, stock_data, indicators, table)
+        # 檢測 K 線型態
+        pattern_features = self.pattern_detector.detect_and_combine(stock_data)
+        
+        # 保存數據到資料庫
+        self.repository.save_stock_data(symbol, stock_data, indicators, pattern_features, table)
         
         return {
             'symbol': symbol,
             'market': market,
             'interval': interval,
             'data_count': len(stock_data),
-            'indicator_count': len(indicators.columns)
+            'indicator_count': len(indicators.columns),
+            'pattern_count': (pattern_features != '').sum()
         }

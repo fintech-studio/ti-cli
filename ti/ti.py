@@ -28,8 +28,8 @@ def main():
     #幫助訊息
     help_parser = subparsers.add_parser('help', help='顯示幫助訊息')
 
-    # add 子命令 - 計算技術指標並分析交易訊號
-    add_parser = subparsers.add_parser('add', help='計算技術指標並分析交易訊號')
+    # add 子命令 - 計算技術指標並分檢測k線型態
+    add_parser = subparsers.add_parser('add', help='計算技術指標並分檢測k線型態')
 
     # 市場選項
     add_parser.add_argument('symbols', nargs='*', help='股票代碼列表 (例如: 2330 AAPL)')
@@ -69,7 +69,7 @@ def main():
         show_help()
         return
     
-    # 處理 add 子命令 - 計算技術指標並分析交易訊號
+    # 處理 add 子命令 - 計算技術指標並分析檢測k線型態
     if args.command == 'add':
         service = StockDataService()
         
@@ -114,7 +114,7 @@ def main():
         elif args.__dict__.get('1d'):
             time = '1d'
         elif args.__dict__.get('1w'):
-            time = '1w'
+            time = '1wk'
         elif args.__dict__.get('1mo'):
             time = '1mo'
         else:
@@ -128,6 +128,7 @@ def main():
                 print(f"✓ {symbol} 技術指標資料已成功儲存")
                 print(f"  - 獲取了 {result['data_count']} 筆股票數據")
                 print(f"  - 計算了 {result['indicator_count']} 個技術指標")
+                print(f"  - 檢測了 {result['pattern_count']} 筆K線型態資料")
                 print(f"  - 數據已保存至資料表 stock_data_{time}")
                 
             except Exception as e:
@@ -241,7 +242,7 @@ def show_help():
   {color_text('--30m', Colors.MAGENTA)}         30 minutes data
   {color_text('--1h', Colors.MAGENTA)}          1 hour data
   {color_text('--1d', Colors.MAGENTA)}          1 day data
-  {color_text('--1w', Colors.MAGENTA)}          1 week data
+  {color_text('--1wk', Colors.MAGENTA)}         1 week data
   {color_text('--1mo', Colors.MAGENTA)}         1 month data
 
 {color_text('Database Configuration:', Colors.BOLD + Colors.YELLOW)}

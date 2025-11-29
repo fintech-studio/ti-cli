@@ -10,7 +10,7 @@ class StockDataRepository:
         self.conn_str = config.get_connection_string()
         self.conn = pyodbc.connect(self.conn_str)
     
-    def save_stock_data(self, symbol, stock_data, indicators, table):
+    def save_stock_data(self, symbol, stock_data, indicators, pattern_features, table):
         """保存股票數據和技術指標"""
         self._ensure_table(table)
         
@@ -26,12 +26,16 @@ class StockDataRepository:
                               (symbol, index))
                 exists = cursor.fetchone()[0] > 0
                 
+                # 取得對應的型態特徵
+                pattern_feature = pattern_features.loc[index] if index in pattern_features.index else ''
+                
                 if exists:
                     # 更新現有記錄
                     columns = list(combined_data.columns)
                     set_clause = ', '.join([f"[{col}]=?" if col in ['Open', 'Close'] else f"{col}=?" for col in columns])
+                    set_clause += ', pattern_feature=?'
                     values = [None if pd.isna(val) else val for val in row.values]
-                    values.extend([symbol, index])
+                    values.extend([pattern_feature, symbol, index])
                     
                     cursor.execute(
                         f"UPDATE {table} SET {set_clause}, lastUpdate=GETDATE() WHERE symbol=? AND datetime=?",
@@ -39,12 +43,12 @@ class StockDataRepository:
                     )
                 else:
                     # 插入新記錄
-                    columns = ['symbol', 'datetime'] + list(combined_data.columns)
+                    columns = ['symbol', 'datetime'] + list(combined_data.columns) + ['pattern_feature']
                     column_names = ', '.join([f"[{col}]" if col in ['Open', 'Close'] else col for col in columns])
                     placeholders = ', '.join(['?' for _ in columns])
                     insert_sql = f"INSERT INTO {table} ({column_names}) VALUES ({placeholders})"
                     
-                    values = [symbol, index] + [None if pd.isna(val) else val for val in row.values]
+                    values = [symbol, index] + [None if pd.isna(val) else val for val in row.values] + [pattern_feature]
                     cursor.execute(insert_sql, values)
             
             self.conn.commit()
@@ -71,6 +75,7 @@ class StockDataRepository:
                     EMA12 DECIMAL(18,4), EMA26 DECIMAL(18,4),
                     Bollinger_Upper DECIMAL(18,4), Bollinger_Middle DECIMAL(18,4), Bollinger_Lower DECIMAL(18,4),
                     ATR DECIMAL(18,4), CCI DECIMAL(18,4), Williams_R DECIMAL(18,4), Momentum DECIMAL(18,4),
+                    pattern_feature NVARCHAR(500),
                     lastUpdate DATETIME DEFAULT GETDATE(),
                     UNIQUE(symbol, datetime)
                 );
