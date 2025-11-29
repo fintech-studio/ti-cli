@@ -48,8 +48,10 @@ def main():
     add_parser.add_argument('--30m', action='store_true', help='30 分鐘數據')
     add_parser.add_argument('--1h', action='store_true', help='1 小時數據')
     add_parser.add_argument('--1d', action='store_true', help='1 天數據')
-    add_parser.add_argument('--1w', action='store_true', help='1 週數據')
+    add_parser.add_argument('--1wk', action='store_true', help='1 週數據')
     add_parser.add_argument('--1mo', action='store_true', help='1 月數據')
+    add_parser.add_argument('--start', type=str, help='開始日期 (YYYY-MM-DD)')
+    add_parser.add_argument('--end', type=str, help='結束日期 (YYYY-MM-DD)')
 
     # db 子命令 - 資料庫管理
     db_parser = subparsers.add_parser('db', help='資料庫配置與管理')
@@ -100,36 +102,45 @@ def main():
             return
         
         # 確定時間選項
-        time = None
+        interval = None
         if args.__dict__.get('1m'):
-            time = '1m'
+            interval = '1m'
         elif args.__dict__.get('5m'):
-            time = '5m'
+            interval = '5m'
         elif args.__dict__.get('15m'):
-            time = '15m'
+            interval = '15m'
         elif args.__dict__.get('30m'):
-            time = '30m'
+            interval = '30m'
         elif args.__dict__.get('1h'):
-            time = '1h'
+            interval = '1h'
         elif args.__dict__.get('1d'):
-            time = '1d'
-        elif args.__dict__.get('1w'):
-            time = '1wk'
+            interval = '1d'
+        elif args.__dict__.get('1wk'):
+            interval = '1wk'
         elif args.__dict__.get('1mo'):
-            time = '1mo'
+            interval = '1mo'
         else:
             print("請指定時間選項 (例: --1d, --1h)")
             return
         
         for symbol in args.symbols:
             try:
-                print(f"正在處理 {symbol} ({market}, {time})...")
-                result = service.fetch_and_store(symbol, market, time)
-                print(f"✓ {symbol} 技術指標資料已成功儲存")
-                print(f"  - 獲取了 {result['data_count']} 筆股票數據")
-                print(f"  - 計算了 {result['indicator_count']} 個技術指標")
-                print(f"  - 檢測了 {result['pattern_count']} 筆K線型態資料")
-                print(f"  - 數據已保存至資料表 stock_data_{time}")
+                if args.start and args.end:
+                    print(f"正在處理 {symbol} ({market}, {interval})，日期範圍: {args.start} ~ {args.end}")
+                    result = service.fetch_and_store_range(symbol, market, interval, args.start, args.end)
+                    print(f"✓ {symbol} 技術指標資料已成功儲存")
+                    print(f"  - 獲取了 {result['data_count']} 筆股票數據")
+                    print(f"  - 計算了 {result['indicator_count']} 個技術指標")
+                    print(f"  - 檢測了 {result['pattern_count']} 筆K線型態資料")
+                    print(f"  - 數據已保存至資料表 stock_data_{interval}")
+                else:    
+                    print(f"正在處理 {symbol} ({market}, {interval})...")
+                    result = service.fetch_and_store(symbol, market, interval)
+                    print(f"✓ {symbol} 技術指標資料已成功儲存")
+                    print(f"  - 獲取了 {result['data_count']} 筆股票數據")
+                    print(f"  - 計算了 {result['indicator_count']} 個技術指標")
+                    print(f"  - 檢測了 {result['pattern_count']} 筆K線型態資料")
+                    print(f"  - 數據已保存至資料表 stock_data_{interval}")
                 
             except Exception as e:
                 print(f"✗ {symbol} 處理失敗: {str(e)}")
