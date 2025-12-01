@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pyodbc>=5.3.0",
-    "ta-lib",
+    "ta-lib>=0.6.8",
     "yfinance>=0.2.66",
 ]
 
@@ -17,6 +17,3 @@ ti = "ti.ti:main"
 packages = ["ti", "ti.services", "ti.providers", "ti.repositories", 
             "ti.calculators", "ti.config","ti.pattern",
             "ti.signals"]
-
-# [tool.uv.sources]
-# ta-lib = { path = "../../../Downloads/ta_lib-0.6.8-cp314-cp314-win_amd64.whl" }
