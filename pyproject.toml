@@ -12,8 +12,3 @@ dependencies = [
 
 [project.scripts]
 ti = "ti.ti:main"
-
-[tool.setuptools]
-packages = ["ti", "ti.services", "ti.providers", "ti.repositories", 
-            "ti.calculators", "ti.config","ti.pattern",
-            "ti.signals"]

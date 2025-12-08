@@ -3,7 +3,7 @@ import pandas as pd
 from ti.config.database_config import DatabaseConfig
 
 class StockDataRepository:
-    """股票數據儲存庫類 - 負責與股票數據相關的資料庫操作"""
+    """股票數據儲存庫 - 負責與股票數據相關的資料庫操作"""
 
     def __init__(self):
         config = DatabaseConfig()

@@ -4,7 +4,7 @@ from ti.calculators.tech_indicator import TechnicalIndicatorCalculator
 from ti.pattern.kline_pattern import KLinePatternDetector
 
 class StockDataService:
-    """股票數據服務類"""
+    """股票數據服務"""
 
     def __init__(self):
         self.provider = StockDataProvider()
