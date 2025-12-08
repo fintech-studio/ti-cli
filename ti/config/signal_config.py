@@ -1,5 +1,7 @@
+from typing import Dict 
+
 # 訊號權重常數
-SIGNAL_WEIGHTS = {
+SIGNAL_WEIGHTS: Dict[str, float] = {
     'MACD_Div': 2.0,
     'MA_Cross': 1.5,
     'MACD_Cross': 1.4,
