@@ -4,24 +4,11 @@ import json
 class ConfigManager:
     """配置檔案管理類 - 負責配置檔案的創建和 I/O 操作"""
     
-    _instance = None
-    
-    def __new__(cls):
-        """singleton"""
-        if cls._instance is None:
-            cls._instance = super(ConfigManager, cls).__new__(cls)
-            cls._instance._initialized = False
-        return cls._instance
-    
     def __init__(self):
-        if self._initialized:
-            return
-            
         config_dir = os.path.join(os.getcwd(), ".ti")
         os.makedirs(config_dir, exist_ok=True)
         self.config_path = os.path.join(config_dir, "config.json")
         self._config_data = self._load_config()
-        self._initialized = True
     
     def _load_config(self):
         """載入配置檔案"""

@@ -1,16 +1,13 @@
 from ti.providers.stock_data_provider import StockDataProvider
 from ti.repositories.stock_data_repository import StockDataRepository
-from ti.calculators.tech_indicator import TechnicalIndicatorCalculator
-from ti.pattern.kline_pattern import KLinePatternDetector
+from ti.analyzers.indicator_calc import TechnicalIndicatorCalculator
+from ti.analyzers.candle_pattern import CandlePatternDetector
 
 class StockDataService:
     """股票數據服務"""
 
     def __init__(self):
-        self.provider = StockDataProvider()
         self.repository = StockDataRepository()
-        self.indicator_calculator = TechnicalIndicatorCalculator()
-        self.pattern_detector = KLinePatternDetector()
     
     def _get_ticker_with_suffix(self, ticker: str, market: str):
         """根據市場格式化股票代號"""
@@ -48,13 +45,13 @@ class StockDataService:
         table = self._get_table_name(interval)
 
         # 獲取股票數據
-        stock_data = self.provider.get_stock_data(formatted_symbol, period, interval)
+        stock_data = StockDataProvider.get_stock_data(formatted_symbol, period, interval)
         
         # 計算技術指標
-        indicators = self.indicator_calculator.calculate_all_indicators(stock_data)
+        indicators = TechnicalIndicatorCalculator.calculate_all_indicators(stock_data)
         
         # 檢測 K 線型態
-        pattern_features = self.pattern_detector.detect_and_combine(stock_data)
+        pattern_features = CandlePatternDetector.detect_and_combine(stock_data)
         
         # 保存數據到資料庫
         self.repository.save_stock_data(symbol, stock_data, indicators, pattern_features, table)
@@ -75,13 +72,13 @@ class StockDataService:
         table = self._get_table_name(interval)
 
         # 獲取股票數據
-        stock_data = self.provider.get_stock_data_range(formatted_symbol, start_date, end_date, interval)
+        stock_data = StockDataProvider.get_stock_data_range(formatted_symbol, start_date, end_date, interval)
         
         # 計算技術指標
-        indicators = self.indicator_calculator.calculate_all_indicators(stock_data)
+        indicators = TechnicalIndicatorCalculator.calculate_all_indicators(stock_data)
         
         # 檢測 K 線型態
-        pattern_features = self.pattern_detector.detect_and_combine(stock_data)
+        pattern_features = CandlePatternDetector.detect_and_combine(stock_data)
         
         # 保存數據到資料庫
         self.repository.save_stock_data(symbol, stock_data, indicators, pattern_features, table)

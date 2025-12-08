@@ -2,7 +2,7 @@ import pyodbc
 from ti.config.database_config import DatabaseConfig
 
 class SignalRepository:
-    """交易信號儲存庫類 - 負責與交易信號相關的資料庫操作"""
+    """交易信號儲存庫 - 負責與交易信號相關的資料庫操作"""
 
     def __init__(self):
         config = DatabaseConfig()

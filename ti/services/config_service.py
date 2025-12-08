@@ -1,7 +1,7 @@
 from ti.config.database_config import DatabaseConfig
 
 class ConfigService:
-    """配置管理服務 - 提供配置的業務邏輯"""
+    """配置檔案管理服務 - 提供配置的業務邏輯"""
     
     def __init__(self):
         self.db_config = DatabaseConfig()
