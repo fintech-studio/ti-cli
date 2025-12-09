@@ -2,22 +2,7 @@ import argparse
 from ti.services.config_service import ConfigService
 from ti.services.database_service import DatabaseService
 from ti.services.stock_data_service import StockDataService
-
-# ANSI 顏色碼
-class Colors:
-    RESET = '\033[0m'
-    BOLD = '\033[1m'
-    RED = '\033[91m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    BLUE = '\033[94m'
-    MAGENTA = '\033[95m'
-    CYAN = '\033[96m'
-    WHITE = '\033[97m'
-    GRAY = '\033[90m'
-
-def color_text(text, color):
-    return f"{color}{text}{Colors.RESET}"
+from ti.utils.colors import Colors
 
 def main():
     parser = argparse.ArgumentParser(description="技術指標計算與交易訊號分析工具",add_help=False)
@@ -225,62 +210,61 @@ def main():
         
 def show_help():
     help_text = f"""
-{color_text('Technical Indicators Analysis System', Colors.BOLD + Colors.CYAN)}
+{Colors.colorize('Technical Indicators Analysis System', Colors.BOLD + Colors.CYAN)}
 
-{color_text('Basic Usage:', Colors.BOLD + Colors.YELLOW)}
-  {color_text('ti', Colors.GREEN)} {color_text('[command]', Colors.BLUE)} {color_text('[options]', Colors.MAGENTA)}
+{Colors.colorize('Basic Usage:', Colors.BOLD + Colors.YELLOW)}
+  {Colors.colorize('ti', Colors.GREEN)} {Colors.colorize('[command]', Colors.BLUE)} {Colors.colorize('[options]', Colors.MAGENTA)}
 
-{color_text('Subcommands:', Colors.BOLD + Colors.YELLOW)}
-  {color_text('ti add', Colors.GREEN)}                               Calculate technical indicators and analyze trading signals
-  {color_text('ti db', Colors.GREEN)}                                Database configuration and management
+{Colors.colorize('Subcommands:', Colors.BOLD + Colors.YELLOW)}
+  {Colors.colorize('ti add', Colors.GREEN)}                               Calculate technical indicators and analyze trading signals
+  {Colors.colorize('ti db', Colors.GREEN)}                                Database configuration and management
 
-{color_text('Technical Analysis:', Colors.BOLD + Colors.YELLOW)}
-  {color_text('ti add', Colors.GREEN)} {color_text('<stock_symbol>', Colors.BLUE)} {color_text('--<market>', Colors.MAGENTA)} {color_text('--<interval>', Colors.MAGENTA)}   Analyze stock with technical indicators
+{Colors.colorize('Technical Analysis:', Colors.BOLD + Colors.YELLOW)}
+  {Colors.colorize('ti add', Colors.GREEN)} {Colors.colorize('<stock_symbol>', Colors.BLUE)} {Colors.colorize('--<market>', Colors.MAGENTA)} {Colors.colorize('--<interval>', Colors.MAGENTA)}   Analyze stock with technical indicators
 
-{color_text('Market Options:', Colors.BOLD + Colors.YELLOW)}
-  {color_text('--tw', Colors.MAGENTA)}          Taiwan Stock Exchange
-  {color_text('--us', Colors.MAGENTA)}          US Stock Market
-  {color_text('--etf', Colors.MAGENTA)}         ETF
-  {color_text('--index', Colors.MAGENTA)}       Index
-  {color_text('--crypto', Colors.MAGENTA)}      Cryptocurrency
-  {color_text('--forex', Colors.MAGENTA)}       Foreign Exchange
-  {color_text('--futures', Colors.MAGENTA)}     Futures
+{Colors.colorize('Market Options:', Colors.BOLD + Colors.YELLOW)}
+  {Colors.colorize('--tw', Colors.MAGENTA)}          Taiwan Stock Exchange
+  {Colors.colorize('--us', Colors.MAGENTA)}          US Stock Market
+  {Colors.colorize('--etf', Colors.MAGENTA)}         ETF
+  {Colors.colorize('--index', Colors.MAGENTA)}       Index
+  {Colors.colorize('--crypto', Colors.MAGENTA)}      Cryptocurrency
+  {Colors.colorize('--forex', Colors.MAGENTA)}       Foreign Exchange
+  {Colors.colorize('--futures', Colors.MAGENTA)}     Futures
 
-{color_text('Time Intervals:', Colors.BOLD + Colors.YELLOW)}
-  {color_text('--1m', Colors.MAGENTA)}          1 minute data
-  {color_text('--5m', Colors.MAGENTA)}          5 minutes data
-  {color_text('--15m', Colors.MAGENTA)}         15 minutes data
-  {color_text('--30m', Colors.MAGENTA)}         30 minutes data
-  {color_text('--1h', Colors.MAGENTA)}          1 hour data
-  {color_text('--1d', Colors.MAGENTA)}          1 day data
-  {color_text('--1wk', Colors.MAGENTA)}         1 week data
-  {color_text('--1mo', Colors.MAGENTA)}         1 month data
+{Colors.colorize('Time Intervals:', Colors.BOLD + Colors.YELLOW)}
+  {Colors.colorize('--1m', Colors.MAGENTA)}          1 minute data
+  {Colors.colorize('--5m', Colors.MAGENTA)}          5 minutes data
+  {Colors.colorize('--15m', Colors.MAGENTA)}         15 minutes data
+  {Colors.colorize('--30m', Colors.MAGENTA)}         30 minutes data
+  {Colors.colorize('--1h', Colors.MAGENTA)}          1 hour data
+  {Colors.colorize('--1d', Colors.MAGENTA)}          1 day data
+  {Colors.colorize('--1wk', Colors.MAGENTA)}         1 week data
+  {Colors.colorize('--1mo', Colors.MAGENTA)}         1 month data
+{Colors.colorize('Database Configuration:', Colors.BOLD + Colors.YELLOW)}
+  {Colors.colorize('ti db --host', Colors.GREEN)} {Colors.colorize('<address>', Colors.BLUE)}               Set database host
+  {Colors.colorize('ti db --database', Colors.GREEN)} {Colors.colorize('<name>', Colors.BLUE)}              Set database name
+  {Colors.colorize('ti db --user', Colors.GREEN)} {Colors.colorize('<username>', Colors.BLUE)}              Set database username
+  {Colors.colorize('ti db --password', Colors.GREEN)} {Colors.colorize('<password>', Colors.BLUE)}          Set database password
+  {Colors.colorize('ti db --driver', Colors.GREEN)} {Colors.colorize('<driver>', Colors.BLUE)}              Set database driver
+  {Colors.colorize('ti db --clear', Colors.GREEN)}                        Clear all database settings
+  {Colors.colorize('ti db --config', Colors.GREEN)}                       Show database configuration
+  {Colors.colorize('ti db --check', Colors.GREEN)}                        Check database connection
+  {Colors.colorize('ti db --tables', Colors.GREEN)}                       Show database tables
 
-{color_text('Database Configuration:', Colors.BOLD + Colors.YELLOW)}
-  {color_text('ti db --host', Colors.GREEN)} {color_text('<address>', Colors.BLUE)}               Set database host
-  {color_text('ti db --database', Colors.GREEN)} {color_text('<name>', Colors.BLUE)}              Set database name
-  {color_text('ti db --user', Colors.GREEN)} {color_text('<username>', Colors.BLUE)}              Set database username
-  {color_text('ti db --password', Colors.GREEN)} {color_text('<password>', Colors.BLUE)}          Set database password
-  {color_text('ti db --driver', Colors.GREEN)} {color_text('<driver>', Colors.BLUE)}              Set database driver
-  {color_text('ti db --clear', Colors.GREEN)}                        Clear all database settings
-  {color_text('ti db --config', Colors.GREEN)}                       Show database configuration
-  {color_text('ti db --check', Colors.GREEN)}                        Check database connection
-  {color_text('ti db --tables', Colors.GREEN)}                       Show database tables
-
-{color_text('Usage Examples:', Colors.BOLD + Colors.YELLOW)}
-  {color_text('# Configure database', Colors.GRAY)}
-  {color_text('ti db --host localhost --database TiDB --user sa --password YourPassword', Colors.GREEN)}
+{Colors.colorize('Usage Examples:', Colors.BOLD + Colors.YELLOW)}
+  {Colors.colorize('# Configure database', Colors.GRAY)}
+  {Colors.colorize('ti db --host localhost --database TiDB --user sa --password YourPassword', Colors.GREEN)}
   
-  {color_text('# Analyze Taiwan stocks', Colors.GRAY)}
-  {color_text('ti add 2330 --tw --1d', Colors.GREEN)}
-  {color_text('ti add 0050 --tw --1h', Colors.GREEN)}
+  {Colors.colorize('# Analyze Taiwan stocks', Colors.GRAY)}
+  {Colors.colorize('ti add 2330 --tw --1d', Colors.GREEN)}
+  {Colors.colorize('ti add 0050 --tw --1h', Colors.GREEN)}
   
-  {color_text('# Analyze US stocks', Colors.GRAY)}
-  {color_text('ti add AAPL --us --1d', Colors.GREEN)}
-  {color_text('ti add TSLA --us --1h', Colors.GREEN)}
+  {Colors.colorize('# Analyze US stocks', Colors.GRAY)}
+  {Colors.colorize('ti add AAPL --us --1d', Colors.GREEN)}
+  {Colors.colorize('ti add TSLA --us --1h', Colors.GREEN)}
   
-  {color_text('# Analyze multiple stocks', Colors.GRAY)}
-  {color_text('ti add 2330 0050 2454 --tw --1d', Colors.GREEN)}
-  {color_text('ti add AAPL MSFT GOOGL --us --1d', Colors.GREEN)}
+  {Colors.colorize('# Analyze multiple stocks', Colors.GRAY)}
+  {Colors.colorize('ti add 2330 0050 2454 --tw --1d', Colors.GREEN)}
+  {Colors.colorize('ti add AAPL MSFT GOOGL --us --1d', Colors.GREEN)}
 """
     print(help_text)
