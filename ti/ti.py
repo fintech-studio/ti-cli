@@ -13,8 +13,8 @@ def main():
     #幫助訊息
     help_parser = subparsers.add_parser('help', help='顯示幫助訊息')
 
-    # add 子命令 - 計算技術指標並分檢測k線型態
-    add_parser = subparsers.add_parser('add', help='計算技術指標並分檢測k線型態')
+    # add 子命令 - 計算技術指標並檢測k線型態
+    add_parser = subparsers.add_parser('add', help='計算技術指標並檢測k線型態')
 
     # 市場選項
     add_parser.add_argument('symbols', nargs='*', help='股票代碼列表 (例如: 2330 AAPL)')
@@ -130,7 +130,7 @@ def main():
             except Exception as e:
                 print(f"✗ {symbol} 處理失敗: {str(e)}")
     
-    # 處理 db 子命令 - 資料庫管理配置與管理
+    # 處理 db 子命令 - 資料庫配置與管理
     if args.command == 'db':
         config_service = ConfigService()
         db_service = DatabaseService()
