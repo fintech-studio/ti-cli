@@ -11,6 +11,5 @@ class Colors:
     WHITE = '\033[97m'
     GRAY = '\033[90m'
 
-    @staticmethod
-    def colorize(text, color):
-        return f"{color}{text}{Colors.RESET}"
+def colorize(text, color):
+    return f"{color}{text}{Colors.RESET}"
