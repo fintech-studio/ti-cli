@@ -238,6 +238,10 @@ def show_help():
   {colorize('--1d', Colors.MAGENTA)}          1 day data
   {colorize('--1wk', Colors.MAGENTA)}         1 week data
   {colorize('--1mo', Colors.MAGENTA)}         1 month data
+
+{colorize('Date Range Options:', Colors.BOLD + Colors.YELLOW)}
+  {colorize('--start', Colors.MAGENTA)} {colorize('<date>', Colors.BLUE)}       Start date (YYYY-MM-DD format)
+  {colorize('--end', Colors.MAGENTA)} {colorize('<date>', Colors.BLUE)}         End date (YYYY-MM-DD format)
 {colorize('Database Configuration:', Colors.BOLD + Colors.YELLOW)}
   {colorize('ti db --host', Colors.GREEN)} {colorize('<address>', Colors.BLUE)}               Set database host
   {colorize('ti db --database', Colors.GREEN)} {colorize('<name>', Colors.BLUE)}              Set database name
@@ -264,5 +268,9 @@ def show_help():
   {colorize('# Analyze multiple stocks', Colors.GRAY)}
   {colorize('ti add 2330 0050 2454 --tw --1d', Colors.GREEN)}
   {colorize('ti add AAPL MSFT GOOGL --us --1d', Colors.GREEN)}
+  
+  {colorize('# Analyze with date range', Colors.GRAY)}
+  {colorize('ti add 2330 --tw --1d --start 2024-01-01 --end 2024-12-31', Colors.GREEN)}
+  {colorize('ti add AAPL --us --1h --start 2024-06-01 --end 2024-06-30', Colors.GREEN)}
 """
     print(help_text)

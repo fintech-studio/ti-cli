@@ -6,15 +6,15 @@ class CandlePatternDetector:
     """K線形態檢測器 - 負責檢測K線圖中的特定形態"""
     
     @staticmethod
-    def detect_patterns(df: pd.DataFrame) -> pd.DataFrame:
+    def detect_patterns(data: pd.DataFrame) -> pd.DataFrame:
         """檢測所有 K 線型態"""
 
-        open_ = df['Open'].values
-        high_ = df['High'].values
-        low_ = df['Low'].values
-        close_ = df['Close'].values
+        open_ = data['Open'].values
+        high_ = data['High'].values
+        low_ = data['Low'].values
+        close_ = data['Close'].values
         
-        result_df = pd.DataFrame(index=df.index)
+        result_df = pd.DataFrame(index=data.index)
         
         for pattern_key, pattern_config in CANDLE_PATTERNS.items():
             if not hasattr(talib, pattern_config.ta_function):
