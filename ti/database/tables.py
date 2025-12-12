@@ -88,7 +88,7 @@ class Futures(MarketDataBaseModel, table=True):
     """期貨數據表"""
 
 # 市場映射字典
-_MARKET_MODELS = {
+MARKET_MODELS = {
     "tw": StockDataTW,
     "us": StockDataUS,
     "crypto": Crypto,
@@ -101,9 +101,9 @@ _MARKET_MODELS = {
 
 def get_model_by_market(market: str):
     """根據市場代碼獲取對應的模型"""
-    model = _MARKET_MODELS.get(market.lower())
+    model = MARKET_MODELS.get(market.lower())
     if not model:
-        raise ValueError(f"不支援的市場: {market}. 支援的市場: {', '.join(_MARKET_MODELS.keys())}")
+        raise ValueError(f"不支援的市場: {market}. 支援的市場: {', '.join(MARKET_MODELS.keys())}")
     return model
 
 def create_tables():
