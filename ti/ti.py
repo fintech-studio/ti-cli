@@ -1,6 +1,4 @@
 import argparse
-from ti.services.config_service import ConfigService
-from ti.services.database_service import DatabaseService
 from ti.services.stock_data_service import StockDataService
 from ti.utils.colors import Colors, colorize
 

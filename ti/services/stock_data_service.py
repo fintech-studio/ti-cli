@@ -1,5 +1,4 @@
 from ti.providers.stock_data_provider import StockDataProvider
-from ti.repositories.stock_data_repository import StockDataRepository
 from ti.analyzers.indicator_calc import TechnicalIndicatorCalculator
 from ti.analyzers.candle_pattern import CandlePatternDetector
 
