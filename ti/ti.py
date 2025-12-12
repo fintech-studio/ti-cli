@@ -1,6 +1,7 @@
 import argparse
 from ti.services.stock_data_service import StockDataService
 from ti.utils.colors import Colors, colorize
+from ti.database.tables import create_tables, MARKET_MODELS, list_tables
 
 def main():
     parser = argparse.ArgumentParser(description="技術指標計算與交易訊號分析工具",add_help=False)
@@ -37,16 +38,9 @@ def main():
     add_parser.add_argument('--end', type=str, help='結束日期 (YYYY-MM-DD)')
 
     # db 子命令 - 資料庫管理
-    db_parser = subparsers.add_parser('db', help='資料庫配置與管理')
-    db_parser.add_argument('--host', type=str, help='設定資料庫位址')
-    db_parser.add_argument('--database', type=str, help='設定資料庫名稱')
-    db_parser.add_argument('--user', type=str, help='設定資料庫使用者名稱')
-    db_parser.add_argument('--password', type=str, help='設定資料庫使用者密碼')
-    db_parser.add_argument('--driver', type=str, help='設定資料庫驅動程式名稱')
-    db_parser.add_argument('--clear', action='store_true', help='清除資料庫設置')
-    db_parser.add_argument('--config', action='store_true', help='顯示資料庫配置')
-    db_parser.add_argument('--check', action='store_true', help='檢查資料庫連線')
-    db_parser.add_argument('--tables',action='store_true',help='列出當前資料庫的資料表')
+    db_parser = subparsers.add_parser('db', help='資料庫管理')
+    db_parser.add_argument('--init', action='store_true', help='初始化資料庫，建立所有資料表')
+    db_parser.add_argument('--tables', action='store_true', help='列出當前資料庫的資料表')
 
     args = parser.parse_args()
 
@@ -115,7 +109,7 @@ def main():
                     print(f"  - 獲取了 {result['data_count']} 筆股票數據")
                     print(f"  - 計算了 {result['indicator_count']} 個技術指標")
                     print(f"  - 檢測了 {result['pattern_count']} 筆K線型態資料")
-                    print(f"  - 數據已保存至資料表 stock_data_{interval}")
+                    print(f"  - 數據已保存至資料表 {market}")
                 else:    
                     print(f"正在處理 {symbol} ({market}, {interval})...")
                     result = service.fetch_and_store(symbol, market, interval)
@@ -123,88 +117,41 @@ def main():
                     print(f"  - 獲取了 {result['data_count']} 筆股票數據")
                     print(f"  - 計算了 {result['indicator_count']} 個技術指標")
                     print(f"  - 檢測了 {result['pattern_count']} 筆K線型態資料")
-                    print(f"  - 數據已保存至資料表 stock_data_{interval}")
+                    print(f"  - 數據已保存至資料表 {market}")
                 
             except Exception as e:
                 print(f"✗ {symbol} 處理失敗: {str(e)}")
     
-    # 處理 db 子命令 - 資料庫配置與管理
+    # 處理 db 子命令 - 資料庫管理
     if args.command == 'db':
-        config_service = ConfigService()
-        db_service = DatabaseService()
+        if args.init:
+            try:
+                print("正在初始化資料庫...")
+                create_tables()
+                print(f"✓ 資料庫初始化成功")
+                print(f"  已建立 {len(MARKET_MODELS)} 個市場資料表:")
+                for market, model in MARKET_MODELS.items():
+                    print(f"    - {model.__tablename__} ({market})")
+            except Exception as e:
+                print(f"✗ 資料庫初始化失敗: {str(e)}")
         
-        has_args = any([args.clear, args.host, args.database, args.user, args.password, 
-                       args.driver, args.config, args.check, args.tables])
+        elif args.tables:
+            try:
+                tables = list_tables()
+                
+                if tables:
+                    print(f"資料庫中的資料表 ({len(tables)} 個):")
+                    for i, table in enumerate(tables, 1):
+                        print(f"  {i}. {table}")
+                else:
+                    print("資料庫中沒有資料表，請先執行 'ti db --init' 初始化資料庫")
+            except Exception as e:
+                print(f"✗ 查詢資料表失敗: {str(e)}")
         
-        if args.clear:
-            confirm = input("Confirm to clear all database settings? (y/n): ")
-            if confirm.lower() == 'y':
-                clear_message = config_service.clear_db_config()
-                print(f"✓ {clear_message}")
-            else:
-                print("Operation cancelled")
-            return
-        
-        if args.host or args.database or args.user or args.password or args.driver:
-            db_update_message = config_service.update_db_config(
-                server=args.host,
-                database=args.database,
-                username=args.user,
-                password=args.password,
-                driver=args.driver
-            )
-            config = config_service.show_db_config()
-            for key, value in config.items():
-                print(f"  {key}: {value}")
-
-            print("\n")
-
-            success, if_db_exits_message = db_service.create_database_if_not_exists(config.get('database'))
-            print(f"  {if_db_exits_message}")
-            print(f"✓ {db_update_message}")
-        
-        if args.config:
-            config = config_service.show_db_config()
-            for key, value in config.items():
-                print(f"  {key}: {value}")
-        
-        if args.check:
-            success, test_connect_message = db_service.test_connection()
-            print(f"  {test_connect_message}")
-
-        if args.tables:
-            success, tables = db_service.list_tables()
-            if success and tables:
-                for i, table in enumerate(tables, 1):
-                    print(f"  {i}. {table}")
-            else:
-                print("not available tables.")
-        
-        if not has_args:
-            # 顯示配置資訊
-            #print("\n")
-            config = config_service.show_db_config()
-            for key, value in config.items():
-                print(f"  {key}: {value}")
-            
-            # 確保資料庫存在
-            print("\n")
-            success, if_db_exits_message = db_service.create_database_if_not_exists(config.get('database'))
-            print(f"  {if_db_exits_message}")
-            
-            # 測試連線
-            print("\n")
-            success, test_connect_message = db_service.test_connection()
-            print(f"  {test_connect_message}")
-            
-            # 列出資料表
-            print("\n")
-            success, tables = db_service.list_tables()
-            if success and tables:
-                for i, table in enumerate(tables, 1):
-                    print(f"  {i}. {table}")
-            else:
-                print("not available tables.")
+        else:
+            print("請指定操作選項:")
+            print("  --init    初始化資料庫，建立所有資料表")
+            print("  --tables  列出當前資料庫的資料表")
         
 def show_help():
     help_text = f"""
@@ -240,20 +187,13 @@ def show_help():
 {colorize('Date Range Options:', Colors.BOLD + Colors.YELLOW)}
   {colorize('--start', Colors.MAGENTA)} {colorize('<date>', Colors.BLUE)}       Start date (YYYY-MM-DD format)
   {colorize('--end', Colors.MAGENTA)} {colorize('<date>', Colors.BLUE)}         End date (YYYY-MM-DD format)
-{colorize('Database Configuration:', Colors.BOLD + Colors.YELLOW)}
-  {colorize('ti db --host', Colors.GREEN)} {colorize('<address>', Colors.BLUE)}               Set database host
-  {colorize('ti db --database', Colors.GREEN)} {colorize('<name>', Colors.BLUE)}              Set database name
-  {colorize('ti db --user', Colors.GREEN)} {colorize('<username>', Colors.BLUE)}              Set database username
-  {colorize('ti db --password', Colors.GREEN)} {colorize('<password>', Colors.BLUE)}          Set database password
-  {colorize('ti db --driver', Colors.GREEN)} {colorize('<driver>', Colors.BLUE)}              Set database driver
-  {colorize('ti db --clear', Colors.GREEN)}                        Clear all database settings
-  {colorize('ti db --config', Colors.GREEN)}                       Show database configuration
-  {colorize('ti db --check', Colors.GREEN)}                        Check database connection
-  {colorize('ti db --tables', Colors.GREEN)}                       Show database tables
+{colorize('Database Management:', Colors.BOLD + Colors.YELLOW)}
+  {colorize('ti db --init', Colors.GREEN)}                         Initialize database and create all tables
+  {colorize('ti db --tables', Colors.GREEN)}                       List all database tables
 
 {colorize('Usage Examples:', Colors.BOLD + Colors.YELLOW)}
-  {colorize('# Configure database', Colors.GRAY)}
-  {colorize('ti db --host localhost --database TiDB --user sa --password YourPassword', Colors.GREEN)}
+  {colorize('# Initialize database', Colors.GRAY)}
+  {colorize('ti db --init', Colors.GREEN)}
   
   {colorize('# Analyze Taiwan stocks', Colors.GRAY)}
   {colorize('ti add 2330 --tw --1d', Colors.GREEN)}
