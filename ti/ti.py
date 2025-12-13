@@ -1,7 +1,7 @@
 import argparse
 from ti.services.stock_data_service import StockDataService
 from ti.utils.colors import Colors, colorize
-from ti.database.tables import create_tables, MARKET_MODELS, list_tables
+from ti.database.tables import create_tables, get_model_count, list_all_tables
 
 def main():
     parser = argparse.ArgumentParser(description="技術指標計算與交易訊號分析工具",add_help=False)
@@ -129,15 +129,13 @@ def main():
                 print("正在初始化資料庫...")
                 create_tables()
                 print(f"✓ 資料庫初始化成功")
-                print(f"  已建立 {len(MARKET_MODELS)} 個市場資料表:")
-                for market, model in MARKET_MODELS.items():
-                    print(f"    - {model.__tablename__} ({market})")
+                print(f"  已建立 {get_model_count()} 個市場資料表")
             except Exception as e:
                 print(f"✗ 資料庫初始化失敗: {str(e)}")
         
         elif args.tables:
             try:
-                tables = list_tables()
+                tables = list_all_tables()
                 
                 if tables:
                     print(f"資料庫中的資料表 ({len(tables)} 個):")
