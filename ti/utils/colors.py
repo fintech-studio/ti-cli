@@ -13,5 +13,5 @@ class Colors(StrEnum):
     WHITE = '\033[97m'
     GRAY = '\033[90m'
 
-def colorize(text, color):
+def colorize(text:str, color:str) -> str:
     return f"{color}{text}{Colors.RESET}"
