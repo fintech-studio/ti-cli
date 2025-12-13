@@ -1,5 +1,7 @@
+from enum import StrEnum
+
 # ANSI 顏色碼
-class Colors:
+class Colors(StrEnum):
     RESET = '\033[0m'
     BOLD = '\033[1m'
     RED = '\033[91m'

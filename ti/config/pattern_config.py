@@ -1,8 +1,8 @@
-from typing import Dict, Optional
-from enum import Enum
+from typing import Optional
+from enum import StrEnum
 from dataclasses import dataclass
 
-class PatternType(Enum):
+class PatternType(StrEnum):
     REVERSAL = "反轉型態"
     CONTINUATION = "持續型態"
     NEUTRAL = "中性型態"
@@ -19,7 +19,7 @@ class CandlePattern:
     description: Optional[str] = None
 
 # K線型態函數與中文註解對應表
-CANDLE_PATTERNS: Dict[str, CandlePattern] = {
+CANDLE_PATTERNS: dict[str, CandlePattern] = {
     # 反轉型態
     'CDLHAMMER': CandlePattern(
         'CDLHAMMER', '錘頭', PatternType.REVERSAL,
