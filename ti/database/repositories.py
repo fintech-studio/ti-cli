@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from datetime import datetime
-from typing import Optional, Type
+from typing import Optional
 from ti.database.tables import MarketDataBaseModel, get_model_by_market
 from ti.database.connection import engine
 import pandas as pd
@@ -10,7 +10,7 @@ class StockDataRepository:
     
     def __init__(self, market: str):
         self.market = market.lower()
-        self.model: Type[MarketDataBaseModel] = get_model_by_market(self.market)
+        self.model: type[MarketDataBaseModel] = get_model_by_market(self.market)
     
     def save_dataframe(self, df: pd.DataFrame, symbol: str, interval: str) -> int:
         """儲存資料到資料庫"""

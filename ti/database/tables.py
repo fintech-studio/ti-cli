@@ -98,11 +98,11 @@ MARKET_MODELS = {
     "futures": Futures,
 }
 
-def get_model_count():
+def get_model_count() -> int:
     """返回市場模型的數量"""
     return len(MARKET_MODELS)
 
-def get_model_by_market(market: str):
+def get_model_by_market(market: str) -> type[MarketDataBaseModel]:
     """根據市場代碼獲取對應的模型"""
     model = MARKET_MODELS.get(market.lower())
     if not model:
@@ -127,7 +127,7 @@ def drop_table_by_market(market: str):
     model = get_model_by_market(market)
     model.metadata.drop_all(engine)
 
-def list_all_tables():
+def list_all_tables() -> list[str]:
     """列出資料庫中的所有資料表"""
     inspector = inspect(engine)
     return inspector.get_table_names()
